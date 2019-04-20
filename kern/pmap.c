@@ -321,7 +321,7 @@ page_free(struct PageInfo *pp)
 	// Hint: You may want to panic if pp->pp_ref is nonzero or
 	// pp->pp_link is not NULL.
 	if (pp->pp_ref || pp->pp_link){
-		panic("page_free: pp->pp_ref is nonzero or pp->pp_link is not NULL\n");
+		panic("page_free: pp->pp_ref is nonzero or pp->pp_link is not NULL");
 	}
 	pp->pp_link = page_free_list;
 	page_free_list = pp;
@@ -363,8 +363,25 @@ page_decref(struct PageInfo* pp)
 pte_t *
 pgdir_walk(pde_t *pgdir, const void *va, int create)
 {
-	// Fill this function in
-	return NULL;
+	// the PDX(va)-th entry in the page directory
+	pde_t *pde_for_va = (pgdir + PDX(va));
+	// check present bit for existence
+	if (!(*pde_for_va & PTE_P)) {
+		if (!create) {
+			return NULL;
+		}
+		struct PageInfo *pt_info = page_alloc(0);
+		if (!pt_info) {
+			// alloc failed
+			return NULL;
+		}
+		++pt_info->pp_ref;
+		// all page address is physical address
+		*pde_for_va = (page2pa(pt_info) | PTE_P | PTE_W | PTE_U);
+	}
+	// pointers are not physical address, use KADDR to convert.
+	// PDE PTE are physical address, NEED TO CAST!
+	return (pte_t *)KADDR(PTE_ADDR(*pde_for_va)) + PTX(va);
 }
 
 //
@@ -381,7 +398,16 @@ pgdir_walk(pde_t *pgdir, const void *va, int create)
 static void
 boot_map_region(pde_t *pgdir, uintptr_t va, size_t size, physaddr_t pa, int perm)
 {
-	// Fill this function in
+	pte_t *pte_for_pa;
+	for (int i = 0; i < size/PGSIZE; ++i){
+		pte_for_pa = pgdir_walk(pgdir, (const void *)va, true);
+		if (!pte_for_pa) {
+			panic("'pgdir_walk' failed!");
+		}
+		*pte_for_pa = PTE_ADDR(pa) | perm | PTE_P;
+		va += PGSIZE;
+		pa += PGSIZE;
+	}
 }
 
 //
@@ -412,7 +438,27 @@ boot_map_region(pde_t *pgdir, uintptr_t va, size_t size, physaddr_t pa, int perm
 int
 page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 {
-	// Fill this function in
+	physaddr_t pa = page2pa(pp);
+	pte_t *pte_for_va = pgdir_walk(pgdir, va, false);
+	// page mapped at va exists
+	if ( pte_for_va && (*pte_for_va & PTE_P) ) {
+		tlb_invalidate(pgdir, va);
+		// if existing page is pp, only update permission
+		if (PTE_ADDR(*pte_for_va) == pa) {
+			*pte_for_va = pa | perm | PTE_P;
+			return 0;
+		}
+		// remove existing mapping
+		page_remove(pgdir, va);
+	}
+	// if pde for va not exist, create one and find pte_for_va
+	pte_for_va = pgdir_walk(pgdir, va, true);
+	// cannot alloc a page table page for va
+	if (!pte_for_va) {
+		return -E_NO_MEM;
+	}
+	*pte_for_va = pa | perm | PTE_P;
+	++pp->pp_ref;
 	return 0;
 }
 
@@ -430,8 +476,14 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 struct PageInfo *
 page_lookup(pde_t *pgdir, void *va, pte_t **pte_store)
 {
-	// Fill this function in
-	return NULL;
+	pte_t *pte_for_va = pgdir_walk(pgdir, va, false);
+	if (pte_store) {
+		*pte_store = pte_for_va;
+	}
+	// cprintf("lookup entry addr %08x\n", PTE_ADDR(*pte_for_va));
+	return (pte_for_va && (*pte_for_va & PTE_P))?
+		// pa2page(PTE_ADDR(*pte_for_va)):NULL;
+		pa2page(*pte_for_va):NULL;
 }
 
 //
@@ -452,7 +504,16 @@ page_lookup(pde_t *pgdir, void *va, pte_t **pte_store)
 void
 page_remove(pde_t *pgdir, void *va)
 {
-	// Fill this function in
+	pte_t *pte_for_va;
+	struct PageInfo *pginfo_for_va = page_lookup(pgdir, va, &pte_for_va);
+	if (!pginfo_for_va) {
+		// panic("no page mapped at linear address %08f", va);
+		// OK OK, silently do nothing 🙃
+		return;
+	}
+	page_decref(pginfo_for_va);
+	*pte_for_va = 0;
+	tlb_invalidate(pgdir, va);
 }
 
 //
