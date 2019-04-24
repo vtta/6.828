@@ -11,6 +11,7 @@
 #include <kern/monitor.h>
 #include <kern/kdebug.h>
 #include <kern/trap.h>
+#include <kern/pmap.h>
 
 #define CMDBUF_SIZE	80	// enough for one VGA text line
 
@@ -25,6 +26,26 @@ struct Command {
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
+	{ "backtrace", "Display the stack backtrace", mon_backtrace },
+	{ "page", "Display page mapping and set or clear flag bits", mon_page },
+	{ "mem", "Dump memory contents of giving physical or virtual address", mon_mem },
+};
+
+struct pte_bits{
+	const char *name;
+	int value;
+};
+
+struct pte_bits pte_bits_mapping[] = {
+	{ "G", PTE_G },
+	{ "PS", PTE_PS },
+	{ "D", PTE_D },
+	{ "A", PTE_A },
+	{ "PCD", PTE_PCD },
+	{ "PWT", PTE_PWT },
+	{ "U", PTE_U },
+	{ "W", PTE_W },
+	{ "P", PTE_P },
 };
 
 /***** Implementations of basic kernel monitor commands *****/
@@ -58,11 +79,129 @@ mon_kerninfo(int argc, char **argv, struct Trapframe *tf)
 int
 mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 {
-	// Your code here.
+	cprintf("Stack backtrace:\n");
+	uint32_t ebp = read_ebp(), eip;
+	struct Eipdebuginfo info;
+	while (ebp) {
+		eip = *((uint32_t *)ebp+1);
+		debuginfo_eip(eip, &info);
+		cprintf("  ebp %08x  eip %08x  args", ebp, eip );
+		// for (int i = 0; i < info.eip_fn_narg; ++i) {
+		for (int i = 0; i < 4; ++i) {
+			cprintf(" %08x", *((uint32_t *)ebp+i+2) );
+		}
+		cprintf("\n    %s:%d: %.*s+%d\n", info.eip_file, info.eip_line,
+			info.eip_fn_namelen, info.eip_fn_name, eip - info.eip_fn_addr);
+		ebp = *(uint32_t *)ebp;
+	}
 	return 0;
 }
 
+static char *
+pg_bits(pte_t pte)
+{
+    static char buf[32];
+    snprintf(buf, 9, "%c%c%c%c%c%c%c%c%c",
+            pte & PTE_G ? 'G' : '-',
+            pte & PTE_PS ? 'S' : '-',
+            pte & PTE_D ? 'D' : '-',
+            pte & PTE_A ? 'A' : '-',
+            pte & PTE_PCD ? 'C' : '-',
+            pte & PTE_PWT ? 'T' : '-',
+            pte & PTE_U ? 'U' : '-',
+            pte & PTE_W ? 'W' : '-',
+            pte & PTE_P ? 'P' : '-');
+    return buf;
+}
 
+int
+mon_page(int argc, char **argv, struct Trapframe *tf)
+{
+
+	if (argc < 3) {
+		cprintf("Usage:\n");
+		cprintf("    %s show begin_address [end_address]\n", argv[0]);
+		cprintf("    %s set virtual_address [G] [PS] [D] [A] [PCD] [PWT] [U] [W] [P]\n", argv[0]);
+		cprintf("    %s clear virtual_address [G] [PS] [D] [A] [PCD] [PWT] [U] [W] [P]\n", argv[0]);
+		return -1;
+	}
+	if (!strcmp(argv[1], "show")) {
+		uintptr_t va_begin = ROUNDDOWN(strtol(argv[2], NULL, 16), PGSIZE),
+			va_end = argc>3?ROUNDDOWN(strtol(argv[3], NULL, 16), PGSIZE):va_begin;
+		if (!(va_begin && va_end)) {
+			return -1;
+		}
+		cprintf("VA       Entry    PA       Flags\n");
+		pte_t *pte_for_va = NULL;
+		for (uintptr_t va = va_begin; va <= va_end; va += 0x1000) {
+			pte_for_va = pgdir_walk(kern_pgdir, (const void *)va, false);
+			cprintf("%08x %08x ", va, pte_for_va);
+			if (pte_for_va) {
+				cprintf("%08x %s\n", (*pte_for_va) & ~0xFFF , pg_bits(*pte_for_va));
+			}
+		}
+		return 0;
+	} else {
+		uintptr_t va = ROUNDDOWN(strtol(argv[2], NULL, 16), PGSIZE);
+		if (!va) {
+			return -1;
+		}
+		pte_t *pte_for_va = pgdir_walk(kern_pgdir, (const void *)va, false);
+		if (!pte_for_va) {
+			return -1;
+		}
+		int perm = 0;
+		for (int i = 2; i < argc; ++i) {
+			for (int j = 0; j < ARRAY_SIZE(pte_bits_mapping); ++j) {
+				if (!strcmp(argv[i], pte_bits_mapping[j].name))
+					perm |= pte_bits_mapping[j].value;
+			}
+		}
+		if (!strcmp(argv[1], "set")) {
+			*pte_for_va |= perm;
+		} else if (!strcmp(argv[1], "clear")) {
+			*pte_for_va &= ~perm;
+		} else {
+			return -1;
+		}
+		cprintf("VA       Entry    PA       Flags\n");
+		cprintf("%08x %08x %08x %s\n", va, pte_for_va,
+			(*pte_for_va) & ~0xFFF, pg_bits(*pte_for_va));
+		return 0;
+	}
+	return -1;
+}
+
+int
+mon_mem(int argc, char **argv, struct Trapframe *tf)
+{
+	if (argc < 2) {
+		cprintf("Usage:\n");
+		cprintf("    %s [-v|-p] begin_address [end_address]\n", argv[0]);
+		return -1;
+	}
+	bool v = true;
+	uintptr_t ba = 0, ea = 0;
+	if (argv[1][0] == '-') {
+		v = !strcmp(argv[1], "-v");
+		ba = strtol(argv[2], NULL, 16);
+		ea = argc>3?strtol(argv[3], NULL, 16):ba;
+	} else {
+		ba = strtol(argv[1], NULL, 16);
+		ea = argc>2?strtol(argv[2], NULL, 16):ba;
+	}
+	if (!v) {
+		ba = (uintptr_t)KADDR(ba);
+		ea = (uintptr_t)KADDR(ea);
+	}
+	ba = ROUNDDOWN(ba, 4);
+	ea = ROUNDUP(ea, 4);
+	cprintf("VA         Data\n");
+	for (; ba <= ea; ba+=4) {
+		cprintf("[%08x] %08x\n", ba, *(uintptr_t *)ba);
+	}
+	return 0;
+}
 
 /***** Kernel monitor command interpreter *****/
 
