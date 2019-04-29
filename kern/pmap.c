@@ -308,8 +308,6 @@ page_alloc(int alloc_flags)
 	res->pp_link = NULL;
 	if (alloc_flags & ALLOC_ZERO) {
 		memset(page2kva(res), '\0', PGSIZE);
-	} else {
-		memset(page2kva(res), 0, PGSIZE);
 	}
 	return res;
 }
@@ -324,9 +322,10 @@ page_free(struct PageInfo *pp)
 	// Fill this function in
 	// Hint: You may want to panic if pp->pp_ref is nonzero or
 	// pp->pp_link is not NULL.
-	if (pp->pp_ref || pp->pp_link){
-		panic("page_free: pp->pp_ref is nonzero or pp->pp_link is not NULL");
-	}
+	if (pp->pp_link)
+		panic("cannot free in-use page");
+	if (pp->pp_ref)
+		panic("double free");
 	pp->pp_link = page_free_list;
 	page_free_list = pp;
 }
@@ -367,25 +366,24 @@ page_decref(struct PageInfo* pp)
 pte_t *
 pgdir_walk(pde_t *pgdir, const void *va, int create)
 {
-	// the PDX(va)-th entry in the page directory
-	pde_t *pde_for_va = (pgdir + PDX(va));
-	// check present bit for existence
-	if (!(*pde_for_va & PTE_P)) {
-		if (!create) {
-			return NULL;
-		}
-		struct PageInfo *pt_info = page_alloc(0);
-		if (!pt_info) {
-			// alloc failed
-			return NULL;
-		}
-		++pt_info->pp_ref;
-		// all page address is physical address
-		*pde_for_va = (page2pa(pt_info) | PTE_P | PTE_W | PTE_U);
-	}
 	// pointers are not physical address, use KADDR to convert.
 	// PDE PTE are physical address, NEED TO CAST!
-	return (pte_t *)KADDR(PTE_ADDR(*pde_for_va)) + PTX(va);
+	if (!pgdir)
+		return NULL;
+	// the PDX(va)-th entry in the page directory
+	pde_t *pde_for_va = pgdir + PDX(va);
+	// check present bit for existence
+	if (pde_for_va && *pde_for_va & PTE_P)
+		return (pte_t *)KADDR(PTE_ADDR(*pde_for_va)) + PTX(va);
+	if (!create)
+		return NULL;
+	struct PageInfo *pt_info = page_alloc(ALLOC_ZERO);
+	if (!pt_info)
+		return NULL;
+	++pt_info->pp_ref;
+	// all page address is physical address
+	*pde_for_va = page2pa(pt_info) | PTE_P | PTE_W | PTE_U;
+	return (pte_t *)page2kva(pt_info) + PTX(va);
 }
 
 //
@@ -442,8 +440,19 @@ boot_map_region(pde_t *pgdir, uintptr_t va, size_t size, physaddr_t pa, int perm
 int
 page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 {
-	physaddr_t pa = page2pa(pp);
-	pte_t *pte_for_va = pgdir_walk(pgdir, va, false);
+	// page info struct is still in page_free_list
+	if (pp->pp_link)
+		panic("cannot insert free physical page");
+	pte_t *pte_for_va = pgdir_walk(pgdir, va, true);
+	if (!pte_for_va) {
+		return -E_NO_MEM;
+	}
+	++pp->pp_ref;
+	if (*pte_for_va & PTE_P)
+		page_remove(pgdir, va);
+	*pte_for_va = PTE_ADDR(page2pa(pp)) | perm | PTE_P;
+	return 0;
+	/*
 	// page mapped at va exists
 	if ( pte_for_va && (*pte_for_va & PTE_P) ) {
 		tlb_invalidate(pgdir, va);
@@ -464,6 +473,7 @@ page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm)
 	*pte_for_va = pa | perm | PTE_P;
 	++pp->pp_ref;
 	return 0;
+	*/
 }
 
 //
@@ -481,13 +491,11 @@ struct PageInfo *
 page_lookup(pde_t *pgdir, void *va, pte_t **pte_store)
 {
 	pte_t *pte_for_va = pgdir_walk(pgdir, va, false);
-	if (pte_store) {
+	if (pte_store)
 		*pte_store = pte_for_va;
-	}
-	// cprintf("lookup entry addr %08x\n", PTE_ADDR(*pte_for_va));
-	return (pte_for_va && (*pte_for_va & PTE_P))?
-		// pa2page(PTE_ADDR(*pte_for_va)):NULL;
-		pa2page(*pte_for_va):NULL;
+	if (!pte_for_va)
+		return NULL;
+	return pa2page(PTE_ADDR(*pte_for_va));
 }
 
 //
