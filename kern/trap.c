@@ -69,7 +69,7 @@ trap_init(void)
 	for (int i = 0; i < ARRAY_SIZE(idt); ++i)
 		SETGATE(idt[i], false, GD_KT, trap_vectors[i], 0);
 	SETGATE(idt[T_SYSCALL], true, GD_KT, trap_vectors[T_SYSCALL], 3);
-	
+
 	// Per-CPU setup 
 	trap_init_percpu();
 }
@@ -148,6 +148,13 @@ trap_dispatch(struct Trapframe *tf)
 {
 	// Handle processor exceptions.
 	// LAB 3: Your code here.
+	switch (tf->tf_trapno) {
+	case T_PGFLT:
+		page_fault_handler(tf);
+		return;
+	default:
+		break;
+	}
 
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
