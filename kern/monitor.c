@@ -29,6 +29,8 @@ static struct Command commands[] = {
 	{ "backtrace", "Display the stack backtrace", mon_backtrace },
 	{ "page", "Display page mapping and set or clear flag bits", mon_page },
 	{ "mem", "Dump memory contents of giving physical or virtual address", mon_mem },
+	{ "stepi", "Single-step debuggee", mon_stepi },
+	{ "continue", "Continue executing debuggee", mon_continue }
 };
 
 struct pte_bits{
@@ -204,6 +206,32 @@ mon_mem(int argc, char **argv, struct Trapframe *tf)
 		cprintf("[%08x] %08x\n", ba, *(uintptr_t *)ba);
 	}
 	return 0;
+}
+
+int
+mon_stepi(int argc, char **argv, struct Trapframe *tf)
+{
+	int const e_invalid_command = 1;
+	if (!tf) {
+		cprintf("This command can only be used while debugging\n");
+		return e_invalid_command;
+	}
+	tf->tf_eflags |= FL_TF;
+	// exit kernel monitor
+	return -1;
+}
+
+int
+mon_continue(int argc, char **argv, struct Trapframe *tf)
+{
+	int const e_invalid_command = 1;
+	if (!tf) {
+		cprintf("This command can only be used while debugging\n");
+		return e_invalid_command;
+	}
+	tf->tf_eflags &= ~FL_TF;
+	// exit kernel monitor
+	return -1;
 }
 
 /***** Kernel monitor command interpreter *****/
