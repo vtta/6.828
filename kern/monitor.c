@@ -117,38 +117,40 @@ pg_bits(pte_t pte)
 int
 mon_page(int argc, char **argv, struct Trapframe *tf)
 {
-
+	int const e_invalid_command = 1;
+	int const e_invalid_address = 2;
 	if (argc < 3) {
 		cprintf("Usage:\n");
 		cprintf("    %s show begin_address [end_address]\n", argv[0]);
 		cprintf("    %s set virtual_address [G] [PS] [D] [A] [PCD] [PWT] [U] [W] [P]\n", argv[0]);
 		cprintf("    %s clear virtual_address [G] [PS] [D] [A] [PCD] [PWT] [U] [W] [P]\n", argv[0]);
-		return -1;
+		return e_invalid_command;
 	}
 	if (!strcmp(argv[1], "show")) {
 		uintptr_t va_begin = ROUNDDOWN(strtol(argv[2], NULL, 16), PGSIZE),
 			va_end = argc>3?ROUNDDOWN(strtol(argv[3], NULL, 16), PGSIZE):va_begin;
 		if (!(va_begin && va_end)) {
-			return -1;
+			return e_invalid_address;
 		}
 		cprintf("VA       Entry    PA       Flags\n");
 		pte_t *pte_for_va = NULL;
 		for (uintptr_t va = va_begin; va <= va_end; va += 0x1000) {
 			pte_for_va = pgdir_walk(kern_pgdir, (const void *)va, false);
 			cprintf("%08x %08x ", va, pte_for_va);
-			if (pte_for_va) {
+			if (pte_for_va)
 				cprintf("%08x %s\n", (*pte_for_va) & ~0xFFF , pg_bits(*pte_for_va));
-			}
+			else
+				cprintf("\n");
 		}
 		return 0;
 	} else {
 		uintptr_t va = ROUNDDOWN(strtol(argv[2], NULL, 16), PGSIZE);
 		if (!va) {
-			return -1;
+			return e_invalid_address;
 		}
 		pte_t *pte_for_va = pgdir_walk(kern_pgdir, (const void *)va, false);
 		if (!pte_for_va) {
-			return -1;
+			return e_invalid_address;
 		}
 		int perm = 0;
 		for (int i = 2; i < argc; ++i) {
@@ -162,23 +164,24 @@ mon_page(int argc, char **argv, struct Trapframe *tf)
 		} else if (!strcmp(argv[1], "clear")) {
 			*pte_for_va &= ~perm;
 		} else {
-			return -1;
+			return e_invalid_command;
 		}
 		cprintf("VA       Entry    PA       Flags\n");
 		cprintf("%08x %08x %08x %s\n", va, pte_for_va,
 			(*pte_for_va) & ~0xFFF, pg_bits(*pte_for_va));
 		return 0;
 	}
-	return -1;
+	return e_invalid_command;
 }
 
 int
 mon_mem(int argc, char **argv, struct Trapframe *tf)
 {
+	int const e_invalid_command = 1;
 	if (argc < 2) {
 		cprintf("Usage:\n");
 		cprintf("    %s [-v|-p] begin_address [end_address]\n", argv[0]);
-		return -1;
+		return e_invalid_command;
 	}
 	bool v = true;
 	uintptr_t ba = 0, ea = 0;
