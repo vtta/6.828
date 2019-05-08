@@ -321,6 +321,9 @@ page_init(void)
 	size_t i;
 	// Base mem without the first page
 	for (i = 1; i < npages_basemem; i++) {
+		// avoid adding the page at MPENTRY_PADDR
+		if (i == PGNUM(MPENTRY_PADDR))
+			continue;
 		pages[i].pp_ref = 0;
 		pages[i].pp_link = page_free_list;
 		page_free_list = &pages[i];
@@ -621,7 +624,13 @@ mmio_map_region(physaddr_t pa, size_t size)
 	// Hint: The staff solution uses boot_map_region.
 	//
 	// Your code here:
-	panic("mmio_map_region not implemented");
+	size = ROUNDUP(size, PGSIZE);
+	if (base + size > MMIOLIM)
+		panic("mmio_map_region reservation would overflow MMIOLIM");
+	boot_map_region(kern_pgdir, base, size, pa,
+		PTE_W | PTE_PCD | PTE_PWT);
+	base += size;
+	return (void *)(base - size);
 }
 
 static uintptr_t user_mem_check_addr;
