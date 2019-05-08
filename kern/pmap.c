@@ -582,7 +582,6 @@ user_mem_check(struct Env *env, const void *va, size_t len, int perm)
 	perm |= (PTE_P | PTE_U);
 	pte_t *entry = NULL;
 	uintptr_t bva = (uintptr_t)va, cva = bva;
-	// uintptr_t bva = ROUNDDOWN((uintptr_t)va, PGSIZE), cva = bva;
 	for (; cva - bva < len; cva += PGSIZE) {
 		// cprintf("checking address %08x\n", cva);
 		if (cva >= ULIM)
@@ -594,7 +593,8 @@ user_mem_check(struct Env *env, const void *va, size_t len, int perm)
 	}
 	return 0;
 fault_return:
-	user_mem_check_addr = cva;
+	// set to the FIRST erroneous virtual address
+	user_mem_check_addr = (cva == bva)?cva:ROUNDDOWN(cva, PGSIZE);
 	return -E_FAULT;
 }
 
