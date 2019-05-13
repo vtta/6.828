@@ -273,7 +273,7 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 	// LAB 3: Your code here.
 
 	// panic("syscall not implemented");
-	cprintf("syscall args recived %08x %08x %08x %08x %08x\n", a1, a2, a3, a4, a5);
+	// cprintf("syscall args recived %08x %08x %08x %08x %08x\n", a1, a2, a3, a4, a5);
 	switch (syscallno) {
 	case SYS_cputs:
 		sys_cputs((const char *)a1, a2);

@@ -629,7 +629,7 @@ mmio_map_region(physaddr_t pa, size_t size)
 	//
 	// Your code here:
 	size = ROUNDUP(size, PGSIZE);
-	if (base + size > MMIOLIM)
+	if (base + size > MMIOLIM || base + size < base)
 		panic("mmio_map_region reservation would overflow MMIOLIM");
 	boot_map_region(kern_pgdir, base, size, pa,
 		PTE_W | PTE_PCD | PTE_PWT);
@@ -690,7 +690,7 @@ fault_return:
 void
 user_mem_assert(struct Env *env, const void *va, size_t len, int perm)
 {
-	cprintf("asserting address %08x length %d\n", va, len);
+	// cprintf("asserting address %08x length %d\n", va, len);
 	if (user_mem_check(env, va, len, perm | PTE_U) < 0) {
 		cprintf("[%08x] user_mem_check assertion failure for "
 			"va %08x\n", env->env_id, user_mem_check_addr);
