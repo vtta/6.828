@@ -359,6 +359,9 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		return sys_env_set_status(a1, a2);
 	case SYS_env_set_pgfault_upcall:
 		return sys_env_set_pgfault_upcall(a1, (void *)a2);
+	case SYS_yield:
+		sys_yield();
+		return 0;
 	default:
 		return -E_INVAL;
 	}
