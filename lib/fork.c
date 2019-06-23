@@ -38,8 +38,8 @@ pgfault(struct UTrapframe *utf)
 	// LAB 4: Your code here.
 	// extern volatile pde_t uvpd[];
 	// extern volatile pte_t uvpt[];
-	cprintf("env %08x  err %01x  va %08x  pde %08x  pte %08x\n",
-		sys_getenvid(), err, addr, uvpd[PDX(addr)], uvpt[PGNUM(addr)]);
+	// cprintf("env %08x  err %01x  va %08x  pde %08x  pte %08x\n",
+	// 	sys_getenvid(), err, addr, uvpd[PDX(addr)], uvpt[PGNUM(addr)]);
 	if (!(err & FEC_WR && uvpt[PGNUM(addr)] & PTE_COW)) {
 		cprintf("[%08x] user fault va %08x ip %08x\n",
 			sys_getenvid(), addr, utf->utf_eip);
