@@ -75,8 +75,9 @@ trap_init(void)
 	extern uintptr_t trap_vectors[];
 	for (int i = 0; i < ARRAY_SIZE(idt); ++i)
 		SETGATE(idt[i], false, GD_KT, trap_vectors[i], 0);
-	SETGATE(idt[T_SYSCALL], true, GD_KT, trap_vectors[T_SYSCALL], 3);
-	SETGATE(idt[T_BRKPT], true, GD_KT, trap_vectors[T_BRKPT], 3);
+	SETGATE(idt[T_DEBUG], false, GD_KT, trap_vectors[T_DEBUG], 3);
+	SETGATE(idt[T_BRKPT], false, GD_KT, trap_vectors[T_BRKPT], 3);
+	SETGATE(idt[T_SYSCALL], false, GD_KT, trap_vectors[T_SYSCALL], 3);
 
 	// Per-CPU setup 
 	trap_init_percpu();
