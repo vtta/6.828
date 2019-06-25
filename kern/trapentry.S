@@ -47,10 +47,540 @@
 /*
  * Lab 3: Your code here for generating entry points for the different traps.
  */
+# for i in {0..255} ; do echo "TRAPHANDLER_NOEC(trap_vector${i}, ${i})" ; done
+TRAPHANDLER_NOEC(trap_vector0, 0)
+TRAPHANDLER_NOEC(trap_vector1, 1)
+TRAPHANDLER_NOEC(trap_vector2, 2)
+TRAPHANDLER_NOEC(trap_vector3, 3)
+TRAPHANDLER_NOEC(trap_vector4, 4)
+TRAPHANDLER_NOEC(trap_vector5, 5)
+TRAPHANDLER_NOEC(trap_vector6, 6)
+TRAPHANDLER_NOEC(trap_vector7, 7)
+TRAPHANDLER(trap_vector8, 8)
+TRAPHANDLER_NOEC(trap_vector9, 9)
+TRAPHANDLER(trap_vector10, 10)
+TRAPHANDLER(trap_vector11, 11)
+TRAPHANDLER(trap_vector12, 12)
+TRAPHANDLER(trap_vector13, 13)
+TRAPHANDLER(trap_vector14, 14)
+TRAPHANDLER_NOEC(trap_vector15, 15)
+TRAPHANDLER_NOEC(trap_vector16, 16)
+TRAPHANDLER(trap_vector17, 17)
+TRAPHANDLER_NOEC(trap_vector18, 18)
+TRAPHANDLER_NOEC(trap_vector19, 19)
+TRAPHANDLER_NOEC(trap_vector20, 20)
+TRAPHANDLER_NOEC(trap_vector21, 21)
+TRAPHANDLER_NOEC(trap_vector22, 22)
+TRAPHANDLER_NOEC(trap_vector23, 23)
+TRAPHANDLER_NOEC(trap_vector24, 24)
+TRAPHANDLER_NOEC(trap_vector25, 25)
+TRAPHANDLER_NOEC(trap_vector26, 26)
+TRAPHANDLER_NOEC(trap_vector27, 27)
+TRAPHANDLER_NOEC(trap_vector28, 28)
+TRAPHANDLER_NOEC(trap_vector29, 29)
+TRAPHANDLER_NOEC(trap_vector30, 30)
+TRAPHANDLER_NOEC(trap_vector31, 31)
+TRAPHANDLER_NOEC(trap_vector32, 32)
+TRAPHANDLER_NOEC(trap_vector33, 33)
+TRAPHANDLER_NOEC(trap_vector34, 34)
+TRAPHANDLER_NOEC(trap_vector35, 35)
+TRAPHANDLER_NOEC(trap_vector36, 36)
+TRAPHANDLER_NOEC(trap_vector37, 37)
+TRAPHANDLER_NOEC(trap_vector38, 38)
+TRAPHANDLER_NOEC(trap_vector39, 39)
+TRAPHANDLER_NOEC(trap_vector40, 40)
+TRAPHANDLER_NOEC(trap_vector41, 41)
+TRAPHANDLER_NOEC(trap_vector42, 42)
+TRAPHANDLER_NOEC(trap_vector43, 43)
+TRAPHANDLER_NOEC(trap_vector44, 44)
+TRAPHANDLER_NOEC(trap_vector45, 45)
+TRAPHANDLER_NOEC(trap_vector46, 46)
+TRAPHANDLER_NOEC(trap_vector47, 47)
+TRAPHANDLER_NOEC(trap_vector48, 48)
+TRAPHANDLER_NOEC(trap_vector49, 49)
+TRAPHANDLER_NOEC(trap_vector50, 50)
+TRAPHANDLER_NOEC(trap_vector51, 51)
+TRAPHANDLER_NOEC(trap_vector52, 52)
+TRAPHANDLER_NOEC(trap_vector53, 53)
+TRAPHANDLER_NOEC(trap_vector54, 54)
+TRAPHANDLER_NOEC(trap_vector55, 55)
+TRAPHANDLER_NOEC(trap_vector56, 56)
+TRAPHANDLER_NOEC(trap_vector57, 57)
+TRAPHANDLER_NOEC(trap_vector58, 58)
+TRAPHANDLER_NOEC(trap_vector59, 59)
+TRAPHANDLER_NOEC(trap_vector60, 60)
+TRAPHANDLER_NOEC(trap_vector61, 61)
+TRAPHANDLER_NOEC(trap_vector62, 62)
+TRAPHANDLER_NOEC(trap_vector63, 63)
+TRAPHANDLER_NOEC(trap_vector64, 64)
+TRAPHANDLER_NOEC(trap_vector65, 65)
+TRAPHANDLER_NOEC(trap_vector66, 66)
+TRAPHANDLER_NOEC(trap_vector67, 67)
+TRAPHANDLER_NOEC(trap_vector68, 68)
+TRAPHANDLER_NOEC(trap_vector69, 69)
+TRAPHANDLER_NOEC(trap_vector70, 70)
+TRAPHANDLER_NOEC(trap_vector71, 71)
+TRAPHANDLER_NOEC(trap_vector72, 72)
+TRAPHANDLER_NOEC(trap_vector73, 73)
+TRAPHANDLER_NOEC(trap_vector74, 74)
+TRAPHANDLER_NOEC(trap_vector75, 75)
+TRAPHANDLER_NOEC(trap_vector76, 76)
+TRAPHANDLER_NOEC(trap_vector77, 77)
+TRAPHANDLER_NOEC(trap_vector78, 78)
+TRAPHANDLER_NOEC(trap_vector79, 79)
+TRAPHANDLER_NOEC(trap_vector80, 80)
+TRAPHANDLER_NOEC(trap_vector81, 81)
+TRAPHANDLER_NOEC(trap_vector82, 82)
+TRAPHANDLER_NOEC(trap_vector83, 83)
+TRAPHANDLER_NOEC(trap_vector84, 84)
+TRAPHANDLER_NOEC(trap_vector85, 85)
+TRAPHANDLER_NOEC(trap_vector86, 86)
+TRAPHANDLER_NOEC(trap_vector87, 87)
+TRAPHANDLER_NOEC(trap_vector88, 88)
+TRAPHANDLER_NOEC(trap_vector89, 89)
+TRAPHANDLER_NOEC(trap_vector90, 90)
+TRAPHANDLER_NOEC(trap_vector91, 91)
+TRAPHANDLER_NOEC(trap_vector92, 92)
+TRAPHANDLER_NOEC(trap_vector93, 93)
+TRAPHANDLER_NOEC(trap_vector94, 94)
+TRAPHANDLER_NOEC(trap_vector95, 95)
+TRAPHANDLER_NOEC(trap_vector96, 96)
+TRAPHANDLER_NOEC(trap_vector97, 97)
+TRAPHANDLER_NOEC(trap_vector98, 98)
+TRAPHANDLER_NOEC(trap_vector99, 99)
+TRAPHANDLER_NOEC(trap_vector100, 100)
+TRAPHANDLER_NOEC(trap_vector101, 101)
+TRAPHANDLER_NOEC(trap_vector102, 102)
+TRAPHANDLER_NOEC(trap_vector103, 103)
+TRAPHANDLER_NOEC(trap_vector104, 104)
+TRAPHANDLER_NOEC(trap_vector105, 105)
+TRAPHANDLER_NOEC(trap_vector106, 106)
+TRAPHANDLER_NOEC(trap_vector107, 107)
+TRAPHANDLER_NOEC(trap_vector108, 108)
+TRAPHANDLER_NOEC(trap_vector109, 109)
+TRAPHANDLER_NOEC(trap_vector110, 110)
+TRAPHANDLER_NOEC(trap_vector111, 111)
+TRAPHANDLER_NOEC(trap_vector112, 112)
+TRAPHANDLER_NOEC(trap_vector113, 113)
+TRAPHANDLER_NOEC(trap_vector114, 114)
+TRAPHANDLER_NOEC(trap_vector115, 115)
+TRAPHANDLER_NOEC(trap_vector116, 116)
+TRAPHANDLER_NOEC(trap_vector117, 117)
+TRAPHANDLER_NOEC(trap_vector118, 118)
+TRAPHANDLER_NOEC(trap_vector119, 119)
+TRAPHANDLER_NOEC(trap_vector120, 120)
+TRAPHANDLER_NOEC(trap_vector121, 121)
+TRAPHANDLER_NOEC(trap_vector122, 122)
+TRAPHANDLER_NOEC(trap_vector123, 123)
+TRAPHANDLER_NOEC(trap_vector124, 124)
+TRAPHANDLER_NOEC(trap_vector125, 125)
+TRAPHANDLER_NOEC(trap_vector126, 126)
+TRAPHANDLER_NOEC(trap_vector127, 127)
+TRAPHANDLER_NOEC(trap_vector128, 128)
+TRAPHANDLER_NOEC(trap_vector129, 129)
+TRAPHANDLER_NOEC(trap_vector130, 130)
+TRAPHANDLER_NOEC(trap_vector131, 131)
+TRAPHANDLER_NOEC(trap_vector132, 132)
+TRAPHANDLER_NOEC(trap_vector133, 133)
+TRAPHANDLER_NOEC(trap_vector134, 134)
+TRAPHANDLER_NOEC(trap_vector135, 135)
+TRAPHANDLER_NOEC(trap_vector136, 136)
+TRAPHANDLER_NOEC(trap_vector137, 137)
+TRAPHANDLER_NOEC(trap_vector138, 138)
+TRAPHANDLER_NOEC(trap_vector139, 139)
+TRAPHANDLER_NOEC(trap_vector140, 140)
+TRAPHANDLER_NOEC(trap_vector141, 141)
+TRAPHANDLER_NOEC(trap_vector142, 142)
+TRAPHANDLER_NOEC(trap_vector143, 143)
+TRAPHANDLER_NOEC(trap_vector144, 144)
+TRAPHANDLER_NOEC(trap_vector145, 145)
+TRAPHANDLER_NOEC(trap_vector146, 146)
+TRAPHANDLER_NOEC(trap_vector147, 147)
+TRAPHANDLER_NOEC(trap_vector148, 148)
+TRAPHANDLER_NOEC(trap_vector149, 149)
+TRAPHANDLER_NOEC(trap_vector150, 150)
+TRAPHANDLER_NOEC(trap_vector151, 151)
+TRAPHANDLER_NOEC(trap_vector152, 152)
+TRAPHANDLER_NOEC(trap_vector153, 153)
+TRAPHANDLER_NOEC(trap_vector154, 154)
+TRAPHANDLER_NOEC(trap_vector155, 155)
+TRAPHANDLER_NOEC(trap_vector156, 156)
+TRAPHANDLER_NOEC(trap_vector157, 157)
+TRAPHANDLER_NOEC(trap_vector158, 158)
+TRAPHANDLER_NOEC(trap_vector159, 159)
+TRAPHANDLER_NOEC(trap_vector160, 160)
+TRAPHANDLER_NOEC(trap_vector161, 161)
+TRAPHANDLER_NOEC(trap_vector162, 162)
+TRAPHANDLER_NOEC(trap_vector163, 163)
+TRAPHANDLER_NOEC(trap_vector164, 164)
+TRAPHANDLER_NOEC(trap_vector165, 165)
+TRAPHANDLER_NOEC(trap_vector166, 166)
+TRAPHANDLER_NOEC(trap_vector167, 167)
+TRAPHANDLER_NOEC(trap_vector168, 168)
+TRAPHANDLER_NOEC(trap_vector169, 169)
+TRAPHANDLER_NOEC(trap_vector170, 170)
+TRAPHANDLER_NOEC(trap_vector171, 171)
+TRAPHANDLER_NOEC(trap_vector172, 172)
+TRAPHANDLER_NOEC(trap_vector173, 173)
+TRAPHANDLER_NOEC(trap_vector174, 174)
+TRAPHANDLER_NOEC(trap_vector175, 175)
+TRAPHANDLER_NOEC(trap_vector176, 176)
+TRAPHANDLER_NOEC(trap_vector177, 177)
+TRAPHANDLER_NOEC(trap_vector178, 178)
+TRAPHANDLER_NOEC(trap_vector179, 179)
+TRAPHANDLER_NOEC(trap_vector180, 180)
+TRAPHANDLER_NOEC(trap_vector181, 181)
+TRAPHANDLER_NOEC(trap_vector182, 182)
+TRAPHANDLER_NOEC(trap_vector183, 183)
+TRAPHANDLER_NOEC(trap_vector184, 184)
+TRAPHANDLER_NOEC(trap_vector185, 185)
+TRAPHANDLER_NOEC(trap_vector186, 186)
+TRAPHANDLER_NOEC(trap_vector187, 187)
+TRAPHANDLER_NOEC(trap_vector188, 188)
+TRAPHANDLER_NOEC(trap_vector189, 189)
+TRAPHANDLER_NOEC(trap_vector190, 190)
+TRAPHANDLER_NOEC(trap_vector191, 191)
+TRAPHANDLER_NOEC(trap_vector192, 192)
+TRAPHANDLER_NOEC(trap_vector193, 193)
+TRAPHANDLER_NOEC(trap_vector194, 194)
+TRAPHANDLER_NOEC(trap_vector195, 195)
+TRAPHANDLER_NOEC(trap_vector196, 196)
+TRAPHANDLER_NOEC(trap_vector197, 197)
+TRAPHANDLER_NOEC(trap_vector198, 198)
+TRAPHANDLER_NOEC(trap_vector199, 199)
+TRAPHANDLER_NOEC(trap_vector200, 200)
+TRAPHANDLER_NOEC(trap_vector201, 201)
+TRAPHANDLER_NOEC(trap_vector202, 202)
+TRAPHANDLER_NOEC(trap_vector203, 203)
+TRAPHANDLER_NOEC(trap_vector204, 204)
+TRAPHANDLER_NOEC(trap_vector205, 205)
+TRAPHANDLER_NOEC(trap_vector206, 206)
+TRAPHANDLER_NOEC(trap_vector207, 207)
+TRAPHANDLER_NOEC(trap_vector208, 208)
+TRAPHANDLER_NOEC(trap_vector209, 209)
+TRAPHANDLER_NOEC(trap_vector210, 210)
+TRAPHANDLER_NOEC(trap_vector211, 211)
+TRAPHANDLER_NOEC(trap_vector212, 212)
+TRAPHANDLER_NOEC(trap_vector213, 213)
+TRAPHANDLER_NOEC(trap_vector214, 214)
+TRAPHANDLER_NOEC(trap_vector215, 215)
+TRAPHANDLER_NOEC(trap_vector216, 216)
+TRAPHANDLER_NOEC(trap_vector217, 217)
+TRAPHANDLER_NOEC(trap_vector218, 218)
+TRAPHANDLER_NOEC(trap_vector219, 219)
+TRAPHANDLER_NOEC(trap_vector220, 220)
+TRAPHANDLER_NOEC(trap_vector221, 221)
+TRAPHANDLER_NOEC(trap_vector222, 222)
+TRAPHANDLER_NOEC(trap_vector223, 223)
+TRAPHANDLER_NOEC(trap_vector224, 224)
+TRAPHANDLER_NOEC(trap_vector225, 225)
+TRAPHANDLER_NOEC(trap_vector226, 226)
+TRAPHANDLER_NOEC(trap_vector227, 227)
+TRAPHANDLER_NOEC(trap_vector228, 228)
+TRAPHANDLER_NOEC(trap_vector229, 229)
+TRAPHANDLER_NOEC(trap_vector230, 230)
+TRAPHANDLER_NOEC(trap_vector231, 231)
+TRAPHANDLER_NOEC(trap_vector232, 232)
+TRAPHANDLER_NOEC(trap_vector233, 233)
+TRAPHANDLER_NOEC(trap_vector234, 234)
+TRAPHANDLER_NOEC(trap_vector235, 235)
+TRAPHANDLER_NOEC(trap_vector236, 236)
+TRAPHANDLER_NOEC(trap_vector237, 237)
+TRAPHANDLER_NOEC(trap_vector238, 238)
+TRAPHANDLER_NOEC(trap_vector239, 239)
+TRAPHANDLER_NOEC(trap_vector240, 240)
+TRAPHANDLER_NOEC(trap_vector241, 241)
+TRAPHANDLER_NOEC(trap_vector242, 242)
+TRAPHANDLER_NOEC(trap_vector243, 243)
+TRAPHANDLER_NOEC(trap_vector244, 244)
+TRAPHANDLER_NOEC(trap_vector245, 245)
+TRAPHANDLER_NOEC(trap_vector246, 246)
+TRAPHANDLER_NOEC(trap_vector247, 247)
+TRAPHANDLER_NOEC(trap_vector248, 248)
+TRAPHANDLER_NOEC(trap_vector249, 249)
+TRAPHANDLER_NOEC(trap_vector250, 250)
+TRAPHANDLER_NOEC(trap_vector251, 251)
+TRAPHANDLER_NOEC(trap_vector252, 252)
+TRAPHANDLER_NOEC(trap_vector253, 253)
+TRAPHANDLER_NOEC(trap_vector254, 254)
+TRAPHANDLER_NOEC(trap_vector255, 255)
 
-
+TRAPHANDLER_NOEC(trap_default, T_DEFAULT)
 
 /*
  * Lab 3: Your code here for _alltraps
  */
+_alltraps:
+	# make Trapframe
+	pushw $0
+	pushw %ds
+	pushw $0
+	pushw %es
+	pushal
+	# load GD_KD into %ds and %es
+	movw $(GD_KD),%ax
+	movw %ax,%ds
+	movw %ax,%es
+	# pointer to the Trapframe as an argument
+	pushl %esp
+	call trap
 
+.data
+.global trap_vectors
+trap_vectors:
+	.long trap_vector0
+	.long trap_vector1
+	.long trap_vector2
+	.long trap_vector3
+	.long trap_vector4
+	.long trap_vector5
+	.long trap_vector6
+	.long trap_vector7
+	.long trap_vector8
+	.long trap_vector9
+	.long trap_vector10
+	.long trap_vector11
+	.long trap_vector12
+	.long trap_vector13
+	.long trap_vector14
+	.long trap_vector15
+	.long trap_vector16
+	.long trap_vector17
+	.long trap_vector18
+	.long trap_vector19
+	.long trap_vector20
+	.long trap_vector21
+	.long trap_vector22
+	.long trap_vector23
+	.long trap_vector24
+	.long trap_vector25
+	.long trap_vector26
+	.long trap_vector27
+	.long trap_vector28
+	.long trap_vector29
+	.long trap_vector30
+	.long trap_vector31
+	.long trap_vector32
+	.long trap_vector33
+	.long trap_vector34
+	.long trap_vector35
+	.long trap_vector36
+	.long trap_vector37
+	.long trap_vector38
+	.long trap_vector39
+	.long trap_vector40
+	.long trap_vector41
+	.long trap_vector42
+	.long trap_vector43
+	.long trap_vector44
+	.long trap_vector45
+	.long trap_vector46
+	.long trap_vector47
+	.long trap_vector48
+	.long trap_vector49
+	.long trap_vector50
+	.long trap_vector51
+	.long trap_vector52
+	.long trap_vector53
+	.long trap_vector54
+	.long trap_vector55
+	.long trap_vector56
+	.long trap_vector57
+	.long trap_vector58
+	.long trap_vector59
+	.long trap_vector60
+	.long trap_vector61
+	.long trap_vector62
+	.long trap_vector63
+	.long trap_vector64
+	.long trap_vector65
+	.long trap_vector66
+	.long trap_vector67
+	.long trap_vector68
+	.long trap_vector69
+	.long trap_vector70
+	.long trap_vector71
+	.long trap_vector72
+	.long trap_vector73
+	.long trap_vector74
+	.long trap_vector75
+	.long trap_vector76
+	.long trap_vector77
+	.long trap_vector78
+	.long trap_vector79
+	.long trap_vector80
+	.long trap_vector81
+	.long trap_vector82
+	.long trap_vector83
+	.long trap_vector84
+	.long trap_vector85
+	.long trap_vector86
+	.long trap_vector87
+	.long trap_vector88
+	.long trap_vector89
+	.long trap_vector90
+	.long trap_vector91
+	.long trap_vector92
+	.long trap_vector93
+	.long trap_vector94
+	.long trap_vector95
+	.long trap_vector96
+	.long trap_vector97
+	.long trap_vector98
+	.long trap_vector99
+	.long trap_vector100
+	.long trap_vector101
+	.long trap_vector102
+	.long trap_vector103
+	.long trap_vector104
+	.long trap_vector105
+	.long trap_vector106
+	.long trap_vector107
+	.long trap_vector108
+	.long trap_vector109
+	.long trap_vector110
+	.long trap_vector111
+	.long trap_vector112
+	.long trap_vector113
+	.long trap_vector114
+	.long trap_vector115
+	.long trap_vector116
+	.long trap_vector117
+	.long trap_vector118
+	.long trap_vector119
+	.long trap_vector120
+	.long trap_vector121
+	.long trap_vector122
+	.long trap_vector123
+	.long trap_vector124
+	.long trap_vector125
+	.long trap_vector126
+	.long trap_vector127
+	.long trap_vector128
+	.long trap_vector129
+	.long trap_vector130
+	.long trap_vector131
+	.long trap_vector132
+	.long trap_vector133
+	.long trap_vector134
+	.long trap_vector135
+	.long trap_vector136
+	.long trap_vector137
+	.long trap_vector138
+	.long trap_vector139
+	.long trap_vector140
+	.long trap_vector141
+	.long trap_vector142
+	.long trap_vector143
+	.long trap_vector144
+	.long trap_vector145
+	.long trap_vector146
+	.long trap_vector147
+	.long trap_vector148
+	.long trap_vector149
+	.long trap_vector150
+	.long trap_vector151
+	.long trap_vector152
+	.long trap_vector153
+	.long trap_vector154
+	.long trap_vector155
+	.long trap_vector156
+	.long trap_vector157
+	.long trap_vector158
+	.long trap_vector159
+	.long trap_vector160
+	.long trap_vector161
+	.long trap_vector162
+	.long trap_vector163
+	.long trap_vector164
+	.long trap_vector165
+	.long trap_vector166
+	.long trap_vector167
+	.long trap_vector168
+	.long trap_vector169
+	.long trap_vector170
+	.long trap_vector171
+	.long trap_vector172
+	.long trap_vector173
+	.long trap_vector174
+	.long trap_vector175
+	.long trap_vector176
+	.long trap_vector177
+	.long trap_vector178
+	.long trap_vector179
+	.long trap_vector180
+	.long trap_vector181
+	.long trap_vector182
+	.long trap_vector183
+	.long trap_vector184
+	.long trap_vector185
+	.long trap_vector186
+	.long trap_vector187
+	.long trap_vector188
+	.long trap_vector189
+	.long trap_vector190
+	.long trap_vector191
+	.long trap_vector192
+	.long trap_vector193
+	.long trap_vector194
+	.long trap_vector195
+	.long trap_vector196
+	.long trap_vector197
+	.long trap_vector198
+	.long trap_vector199
+	.long trap_vector200
+	.long trap_vector201
+	.long trap_vector202
+	.long trap_vector203
+	.long trap_vector204
+	.long trap_vector205
+	.long trap_vector206
+	.long trap_vector207
+	.long trap_vector208
+	.long trap_vector209
+	.long trap_vector210
+	.long trap_vector211
+	.long trap_vector212
+	.long trap_vector213
+	.long trap_vector214
+	.long trap_vector215
+	.long trap_vector216
+	.long trap_vector217
+	.long trap_vector218
+	.long trap_vector219
+	.long trap_vector220
+	.long trap_vector221
+	.long trap_vector222
+	.long trap_vector223
+	.long trap_vector224
+	.long trap_vector225
+	.long trap_vector226
+	.long trap_vector227
+	.long trap_vector228
+	.long trap_vector229
+	.long trap_vector230
+	.long trap_vector231
+	.long trap_vector232
+	.long trap_vector233
+	.long trap_vector234
+	.long trap_vector235
+	.long trap_vector236
+	.long trap_vector237
+	.long trap_vector238
+	.long trap_vector239
+	.long trap_vector240
+	.long trap_vector241
+	.long trap_vector242
+	.long trap_vector243
+	.long trap_vector244
+	.long trap_vector245
+	.long trap_vector246
+	.long trap_vector247
+	.long trap_vector248
+	.long trap_vector249
+	.long trap_vector250
+	.long trap_vector251
+	.long trap_vector252
+	.long trap_vector253
+	.long trap_vector254
+	.long trap_vector255
