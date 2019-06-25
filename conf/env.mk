@@ -19,4 +19,4 @@ V = @
 #
 # QEMU=
 
-GCCPREFIX='i386-jos-elf-'
+GCCPREFIX='i386-elf-'

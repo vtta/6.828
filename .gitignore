@@ -16,3 +16,8 @@
 /sol?/
 /myapi.key
 /.suf
+cflow0.dot
+cflow0.png
+py37
+__pycache__
+cflow
