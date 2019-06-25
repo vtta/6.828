@@ -106,17 +106,17 @@ boot_alloc(uint32_t n)
 	// to a multiple of PGSIZE.
 	//
 	// LAB 2: Your code here.
-	if (n < 0) {
-		return NULL;
-	}
-	if (n > 0){
-		if ((uint32_t) nextfree - KERNBASE > npages * PGSIZE ){
-			panic("boot_alloc: we're out of memory, I give up\n");
-		}
-		nextfree = ROUNDUP((char *) (n+nextfree), PGSIZE);
-		// cprintf("n: %08x  nextfree: %08x\n", n, nextfree);
-	}
-	return nextfree;
+	if (!n)
+		return nextfree;
+	if (n < 0)
+		panic("boot_alloc: cannot allocate negative value\n");
+	// return the beginning address of the memory allocated
+	result = nextfree;
+	nextfree = ROUNDUP(nextfree + n, PGSIZE);
+	// nextfree shouldn't exceed 4MB and shouldn't be negative
+	if (PADDR(nextfree) >= PTSIZE || nextfree < result)
+		panic("boot_alloc: we're out of memory, I give up\n");
+	return result;
 }
 
 // Set up a two-level page table:
@@ -333,8 +333,7 @@ page_init(void)
 		page_free_list = &pages[i];
 	}
 	// Free address above kernel and after PageInfo structs
-	uint32_t free_ext_mem_base = (uint32_t)(pages + npages) - KERNBASE;
-	for (i = PGNUM(ROUNDUP(free_ext_mem_base, PGSIZE)); i < npages; i++) {
+	for (i = PGNUM(PADDR(boot_alloc(0))); i < npages; i++) {
 		pages[i].pp_ref = 0;
 		pages[i].pp_link = page_free_list;
 		page_free_list = &pages[i];
